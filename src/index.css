@@ -1,0 +1,30 @@
+ 
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+ @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@plugin "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+
+
+a{
+  text-decoration: none;
+  color: inherit;
+}
+
+body{
+  font-family: var(--font-family);
+}
+
+.container{
+  @apply w-[95%] mx-auto px-4
+}
+
+
+.active{
+  @apply underline text-sky-400
+}
+
+
+ 
