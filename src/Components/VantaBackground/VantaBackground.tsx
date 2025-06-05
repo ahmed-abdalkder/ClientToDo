@@ -12,7 +12,6 @@ import * as THREE from "three";
 
 // Importing different Vanta.js effects
 import NET from "vanta/dist/vanta.net.min"; // NET animation (grid of points connected by lines)
-import BIRDS from "vanta/dist/vanta.birds.min"; // Birds flying animation
 import FOG from "vanta/dist/vanta.fog.min"; // Fog swirling animation
 import WAVES from "vanta/dist/vanta.waves.min"; // Ocean wave animation
 
@@ -24,7 +23,6 @@ interface VantaProps {
 // Mapping between effect names and their corresponding Vanta function
 const effectsMap: Record<string, any> = {
   net: NET,
-  birds: BIRDS,
   fog: FOG,
   waves: WAVES,
 };

@@ -10,7 +10,7 @@ import i18n from '../i18n';
 
 // Creating an Axios instance with default configuration
 const instance = axios.create({
-  baseURL: 'http://localhost:3000',  // Base URL for all requests made through this instance
+  baseURL: 'https://server-to-do-lake.vercel.app',  // Base URL for all requests made through this instance
   headers: {
     'Content-Type': 'application/json' // Default content type for requests
   }
