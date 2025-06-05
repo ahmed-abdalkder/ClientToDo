@@ -68,7 +68,7 @@ const Navbar = () => {
         
         {/* App title/logo */}
         <div className="text-center text-2xl font-medium">
-          <img src={todooz} className="w-20 h-12" alt="" />
+          <img src={todooz} className="w-28 h-14" alt="" />
           {/* <h1>
             TO
             <span className="text-sky-600">
