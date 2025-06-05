@@ -1,81 +1,21 @@
-//  import React from 'react';
-
-// import { Link } from "react-router-dom";
-// import { TodoContext } from "../../Context/Todo/TodoContext";
-// import { useContext, useEffect } from "react";
  
-// const stickyNoteColors = [
-//     "bg-yellow-200/70",
-//     "bg-pink-200/80",
-//     "bg-green-200/80",
-//     "bg-blue-200/80",
-//     "bg-purple-200/80",
-//     "bg-indigo-200/60",
-//     "bg-orange-200/80",
-//     "bg-lime-200/80"
-//   ];
-
-//   type TodoCardProps = {
-//     id: string
-//     title: string;
-//     colorIndex: number;
-//     imageSrc:string;
-//     removeTodo: (id: string) => void;
-//   };
-  
-//   const HomeTodoCard = ({ title, imageSrc, colorIndex, id, removeTodo }: TodoCardProps) => {
-
-//    const { completedTasksPercentages, getTasks } = useContext(TodoContext);
-
-//    const percentage = id ? completedTasksPercentages[id] : 0;
-
-//   const bgColor = stickyNoteColors[colorIndex % stickyNoteColors.length];
 
 
-// useEffect(() => {
-//     getTasks(id);
-// }, [id]);
-
-//   return (
-//      <div className={`relative p-3 rounded-md shadow-md ${bgColor} text-slate-900`}>
-//   <Link to={`/tododetails/${id}`} className="block">
-//     {/* العنوان والصورة */}
-//     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-//       <div className="flex items-center gap-3">
-//         <img src={imageSrc} alt="todo image" className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover" />
-//         <h2 className="font-bold text-base sm:text-lg">{title}</h2>
-//       </div>
-//     </div>
-
-//     {/* شريط التقدم */}
-//     <div className="w-full bg-gray-300 rounded-full">
-//       <div
-//         className={`${percentage ? "bg-sky-400" : ""} text-xs font-medium text-white text-center py-1 px-2 leading-none rounded-full`}
-//         style={{ width: `${percentage}%` }}
-//       >
-//         {percentage}%
-//       </div>
-//     </div>
-//   </Link>
-
-//   {/* زر الحذف */}
-//   <i
-//     onClick={() => removeTodo(id)}
-//     className="absolute top-3 end-3 cursor-pointer hover:text-red-700 transition-colors duration-300 text-lg sm:text-xl text-gray-500 fa-solid fa-trash-can"
-//   ></i>
-// </div>
-
-//   );
-// };
-  
-
-//   export default HomeTodoCard
-
-import React from 'react';
+/**
+ * HomeTodoCard Component
+ * 
+ * This component renders a single Todo card displayed on the home page.
+ * It shows the todo's title, progress percentage, and an image.
+ * It also provides delete functionality with a confirmation step.
+ * The card is styled dynamically with gradient colors based on the colorIndex.
+ */
+ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { TodoContext } from "../../Context/Todo/TodoContext";
-import { useContext, useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
+ 
 
+// Color gradients for card accents (used for borders and highlights)
 const modernColors = [
   "from-rose-400 to-pink-500",
   "from-blue-400 to-cyan-500", 
@@ -87,6 +27,7 @@ const modernColors = [
   "from-cyan-400 to-blue-500"
 ];
 
+// Background gradients for the card container
 const cardBackgrounds = [
   "bg-gradient-to-br from-rose-50 to-pink-100",
   "bg-gradient-to-br from-blue-50 to-cyan-100",
@@ -98,6 +39,7 @@ const cardBackgrounds = [
   "bg-gradient-to-br from-cyan-50 to-blue-100"
 ];
 
+// Define the props type for the HomeTodoCard component
 type TodoCardProps = {
   id: string;
   title: string;
@@ -106,34 +48,51 @@ type TodoCardProps = {
   removeTodo: (id: string) => void;
 };
 
+
 const HomeTodoCard = ({ title, imageSrc, colorIndex, id, removeTodo }: TodoCardProps) => {
+  // Get tasks and completion percentages from the TodoContext
   const { completedTasksPercentages, getTasks } = useContext(TodoContext);
+
+  // Local state to handle deletion animation and confirmation display
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Calculate the completion percentage for this todo using its id
   const percentage = id ? completedTasksPercentages[id] : 0;
-  
+
+  // Translation hook for multi-language support
+  const { t } = useTranslation();
+
+  // Determine gradient and background colors based on colorIndex, looping through arrays
   const gradientColor = modernColors[colorIndex % modernColors.length];
   const bgColor = cardBackgrounds[colorIndex % cardBackgrounds.length];
 
+  // Fetch tasks for this todo when component mounts or id changes
   useEffect(() => {
     getTasks(id);
   }, [id]);
 
+  // Handle the delete button click, call the removeTodo prop function
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
       await removeTodo(id);
     } catch (error) {
-      setIsDeleting(false);
+      setIsDeleting(false);  // Reset deleting state if an error occurs
     }
   };
 
   return (
+    // Main card container with styling and hover effects
     <div className={`group relative ${bgColor} rounded-2xl shadow-lg hover:shadow-xl border border-white/50 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 overflow-hidden`}>
-      {/* Card Content */}
+      
+      {/* Link to the todo details page */}
       <Link to={`/tododetails/${id}`} className="block p-6">
-        {/* Header */}
+        
+        {/* Header section with image and title */}
         <div className="flex items-start gap-4 mb-6">
+          
+          {/* Todo image with fallback on error */}
           <div className="relative">
             <img 
               src={imageSrc} 
@@ -141,43 +100,48 @@ const HomeTodoCard = ({ title, imageSrc, colorIndex, id, removeTodo }: TodoCardP
               className="w-14 h-14 rounded-xl object-cover shadow-md ring-2 ring-white/50"
               onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                 const target = e.target as HTMLImageElement;
-                target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iMTIiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik0yOCAzNkMzMi40MTgzIDM2IDM2IDMyLjQxODMgMzYgMjhDMzYgMjMuNTgxNyAzMi40MTgzIDIwIDI4IDIwQzIzLjU4MTcgMjAgMjAgMjMuNTgxNyAyMCAyOEMyMCAzMi40MTgzIDIzLjU4MTcgMzYgMjggMzZaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8xXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjU2IiB5Mj0iNTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzk5RjZFNCIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2MzY2RjEiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K';
+                target.src = 'data:image/svg+xml;base64,...'; // Fallback image in case of load failure
               }}
             />
+            {/* Color badge overlay on image */}
             <div className={`absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r ${gradientColor} rounded-full flex items-center justify-center shadow-lg`}>
               <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="..." clipRule="evenodd" />
               </svg>
             </div>
           </div>
-          
+
+          {/* Title and progress text */}
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-lg text-slate-800 truncate group-hover:text-slate-900 transition-colors duration-200">
               {title}
             </h3>
             <p className="text-sm text-slate-600 mt-1">
-              {percentage === 100 ? 'Completed!' : `${percentage}% complete`}
+              {/* Display "Completed" if 100%, else show percentage */}
+              {percentage === 100 ? t("card.completed") : `${percentage}% ${t("card.complete")}`}
             </p>
           </div>
         </div>
 
-        {/* Progress Section */}
+        {/* Progress bar section */}
         <div className="space-y-3">
+          {/* Label and percentage number */}
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600 font-medium">Progress</span>
+            <span className="text-slate-600 font-medium">{t("card.progress")}</span>
             <span className={`font-bold ${percentage === 100 ? 'text-green-600' : 'text-slate-700'}`}>
               {percentage}%
             </span>
           </div>
           
+          {/* Progress bar background */}
           <div className="relative">
             <div className="w-full bg-white/60 rounded-full h-3 shadow-inner">
+              {/* Progress bar fill width controlled by percentage */}
               <div
-                className={`h-3 rounded-full transition-all duration-500 ease-out shadow-sm ${
-                  percentage > 0 ? `bg-gradient-to-r ${gradientColor}` : ''
-                }`}
+                className={`h-3 rounded-full transition-all duration-500 ease-out shadow-sm ${percentage > 0 ? `bg-gradient-to-r ${gradientColor}` : ''}`}
                 style={{ width: `${percentage}%` }}
               >
+                {/* Pulsing indicator at the end of progress bar if progress > 0 */}
                 {percentage > 0 && (
                   <div className="absolute right-0 top-0 w-3 h-3 bg-white/30 rounded-full animate-pulse"></div>
                 )}
@@ -186,7 +150,7 @@ const HomeTodoCard = ({ title, imageSrc, colorIndex, id, removeTodo }: TodoCardP
           </div>
         </div>
 
-        {/* Status Badge */}
+        {/* Status badge showing completion state */}
         <div className="mt-4 flex items-center gap-2">
           <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
             percentage === 100 
@@ -195,41 +159,44 @@ const HomeTodoCard = ({ title, imageSrc, colorIndex, id, removeTodo }: TodoCardP
               ? 'bg-blue-100 text-blue-700'
               : 'bg-slate-100 text-slate-600'
           }`}>
+            {/* Different icon and text depending on progress */}
             {percentage === 100 ? (
               <>
                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="..." clipRule="evenodd" />
                 </svg>
-                Complete
+                {t("card.status.complete")}
               </>
             ) : percentage > 0 ? (
               <>
                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="..." clipRule="evenodd" />
                 </svg>
-                In Progress
+                {t("card.status.inProgress")}
               </>
             ) : (
               <>
                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="..." clipRule="evenodd" />
                 </svg>
-                Not Started
+                {t("card.status.notStarted")}
               </>
             )}
           </div>
         </div>
       </Link>
 
-      {/* Delete Button */}
+      {/* Delete button and confirmation overlay */}
       <div className="absolute top-4 end-4">
         {showDeleteConfirm ? (
+          // Confirmation buttons (confirm and cancel)
           <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-lg">
             <button
               onClick={handleDelete}
               disabled={isDeleting}
               className="w-8 h-8 bg-red-500 hover:bg-red-600 disabled:bg-red-400 text-white rounded-md flex items-center justify-center transition-colors duration-200"
             >
+              {/* Show spinner when deleting */}
               {isDeleting ? (
                 <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
@@ -248,24 +215,26 @@ const HomeTodoCard = ({ title, imageSrc, colorIndex, id, removeTodo }: TodoCardP
             </button>
           </div>
         ) : (
+          // Delete button (shows on hover)
           <button
             onClick={() => setShowDeleteConfirm(true)}
             className="w-10 h-10 bg-white/80 hover:bg-white/90 backdrop-blur-sm text-slate-600 hover:text-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l..." />
             </svg>
           </button>
         )}
       </div>
-
-      {/* Hover Effect Overlay */}
+      
+      {/* Hover effect overlay (fades in on hover) */}
       <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"></div>
       
-      {/* Bottom Accent Line */}
+      {/* Bottom accent line with gradient color */}
       <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${gradientColor} opacity-60 group-hover:opacity-100 transition-opacity duration-300`}></div>
     </div>
   );
-};
+}
+export default HomeTodoCard
 
-export default HomeTodoCard;
+ 

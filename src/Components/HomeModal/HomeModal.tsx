@@ -1,204 +1,80 @@
-//  import React from 'react';
+ 
 
-// import { useFormik } from "formik"
-// import { useState } from "react";
-// import * as Yup from "yup";
-// import { useTranslation } from 'react-i18next';
+// Component: HomeModal
+// Purpose: This component renders a modal that allows the user to create a new todo item with a title and an image.
+// It includes drag-and-drop file upload, validation using Formik and Yup, and internationalization using i18next.
 
-// const HomeModal = ({ handleAddTodo } : { handleAddTodo:(formData : FormData) => Promise<void> }) => {
-//   const { t } = useTranslation();
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-    
-//   const formik = useFormik({
-//     initialValues:{
-//       title:"",
-//       image:null,
-      
-//     },
+import React from 'react'; // Core React library for building components
+import { useFormik } from "formik"; // Hook for handling form state and submission
+import { useState } from "react"; // Hook for managing local state (modal open, drag state, loading)
+import * as Yup from "yup"; // Validation schema library
+import { useTranslation } from 'react-i18next'; // i18n hook for translating text
 
-//     onSubmit:async({ title, image })=>{
-//       const formData = new FormData();
-//       formData.append("title", title);
-//       if (image) {
-//         formData.append("image", image);
-//       }
-
-//       await handleAddTodo(formData);
-//       setIsModalOpen(false);
-//       formik.resetForm(); 
-//     },
-//     validationSchema: Yup.object({
-//       title: Yup.string()
-//         .required(t('titleRequired')),
-//       image: Yup.mixed()
-//         .required(t('imageRequired')),
-     
-//     }),
-//   });
-
-//   return (
-//    <div>
-//   {/* open modal */}
-//   <button
-//     onClick={() => setIsModalOpen(true)}
-//     className="w-full text-white bg-sky-400 hover:bg-sky-500 focus:outline-none font-medium rounded-lg text-sm px-4 py-2.5 text-center sm:w-auto"
-//   >
-//     <i className="fa-solid fa-plus"></i> {t('newTodo')}
-//   </button>
-
-//   {/* modal */}
-//   {isModalOpen && (
-//     <div
-//       onClick={() => setIsModalOpen(false)}
-//       className="fixed top-0 left-0 w-full h-full bg-black/50 z-50 flex items-center justify-center p-2"
-//     >
-//       <div
-//         onClick={(e) => e.stopPropagation()}
-//         className="relative w-full max-w-md bg-white rounded-lg shadow-lg"
-//       >
-//         {/* header */}
-//         <div className="flex items-center justify-between px-4 py-3 border-b">
-//           <h3 className="text-base font-semibold text-gray-900">{t('newTodo')}</h3>
-//           <button
-//             onClick={() => setIsModalOpen(false)}
-//             type="button"
-//             className="text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex items-center justify-center"
-//           >
-//             <i className="fa-solid fa-xmark"></i>
-//           </button>
-//         </div>
-
-//         {/* body */}
-//         <form onSubmit={formik.handleSubmit} className="px-4 py-5">
-//           <div className="grid gap-4">
-//             {/* title */}
-//             <div>
-//               <label htmlFor="title" className="block mb-1 text-sm font-medium text-gray-900">
-//                 {t('title')}
-//               </label>
-//               <input
-//                 onChange={formik.handleChange}
-//                 value={formik.values.title}
-//                 type="text"
-//                 name="title"
-//                 id="title"
-//                 className="w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-sky-400"
-//                 placeholder={t('titlePlaceholder')}
-//               />
-//               {formik.touched.title && formik.errors.title && (
-//                 <div className="mt-1 text-sm text-red-600">{formik.errors.title}</div>
-//               )}
-//             </div>
-
-//             {/* image */}
-//             <div>
-//               <label htmlFor="image" className="block mb-1 text-sm font-medium text-gray-900">
-//                 {t('uploadImage')}
-//               </label>
-//               <input
-//                 accept="image/*"
-//                 onChange={(e) => {
-//                   const file = e.currentTarget.files?.[0];
-//                   if (file) {
-//                     formik.setFieldValue("image", file);
-//                   }
-//                 }}
-//                 type="file"
-//                 id="image"
-//                 name="image"
-//                 className="w-full file:bg-gray-700 file:text-white file:px-4 file:py-2 file:rounded-lg file:border-none file:cursor-pointer text-sm border border-gray-300 rounded-lg bg-gray-50"
-//               />
-//               {formik.touched.image && formik.errors.image && (
-//                 <div className="mt-1 text-sm text-red-600">{formik.errors.image}</div>
-//               )}
-//             </div>
-//           </div>
-
-//           <button
-//             type="submit"
-//             className="w-full mt-5 text-white bg-sky-500 hover:bg-sky-400 font-medium rounded-lg text-sm px-5 py-2.5"
-//           >
-//             {t('addNewTodo')}
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   )}
-// </div>
-
-//   );
-// };
-
-// export default HomeModal;
-
-
-import React from 'react';
-import { useFormik } from "formik";
-import { useState } from "react";
-import * as Yup from "yup";
-import { useTranslation } from 'react-i18next';
-
+// Props: handleAddTodo - function to handle the form submission (passed from parent)
 const HomeModal = ({ handleAddTodo }: { handleAddTodo: (formData: FormData) => Promise<void> }) => {
-  const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation(); // Hook to access translated strings
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controls modal visibility
+  const [dragActive, setDragActive] = useState(false); // Tracks drag-and-drop state
+  const [isSubmitting, setIsSubmitting] = useState(false); // Tracks form submission state (loading)
 
+  // Formik setup for form handling and validation
   const formik = useFormik({
     initialValues: {
-      title: "",
-      image: null,
+      title: "",   // Default value for title
+      image: null, // Default value for image
     },
     onSubmit: async ({ title, image }) => {
-      setIsSubmitting(true);
+      setIsSubmitting(true); // Show loading spinner on submit
       try {
         const formData = new FormData();
         formData.append("title", title);
         if (image) {
-          formData.append("image", image);
+          formData.append("image", image); // Append image if exists
         }
 
-        await handleAddTodo(formData);
-        setIsModalOpen(false);
-        formik.resetForm();
+        await handleAddTodo(formData); // Call parent handler with form data
+        setIsModalOpen(false); // Close modal after submission
+        formik.resetForm(); // Reset form fields
       } catch (error) {
-        console.error('Error adding todo:', error);
+        console.error('Error adding todo:', error); // Log error if submission fails
       } finally {
-        setIsSubmitting(false);
+        setIsSubmitting(false); // Stop loading spinner
       }
     },
     validationSchema: Yup.object({
-      title: Yup.string().required(t('titleRequired') || 'Title is required'),
-      image: Yup.mixed().required(t('imageRequired') || 'Image is required'),
+      title: Yup.string().required(t('titleRequired') || 'Title is required'), // Title is required
+      image: Yup.mixed().required(t('imageRequired') || 'Image is required'),  // Image is required
     }),
   });
 
+  // Handle drag events for file drop area
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
+      setDragActive(true); // Highlight drop area
     } else if (e.type === "dragleave") {
-      setDragActive(false);
+      setDragActive(false); // Remove highlight
     }
   };
 
+  // Handle file drop and update formik field
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       if (file.type.startsWith('image/')) {
-        formik.setFieldValue("image", file);
+        formik.setFieldValue("image", file); // Update form with dropped file
       }
     }
   };
 
   return (
     <div>
-      {/* Trigger Button */}
+      {/* Button to open the modal */}
       <button
         onClick={() => setIsModalOpen(true)}
         className="group relative z-50 w-full lg:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
@@ -211,14 +87,14 @@ const HomeModal = ({ handleAddTodo }: { handleAddTodo: (formData: FormData) => P
         <span>{t('newTodo') || 'New Todo'}</span>
       </button>
 
-      {/* Modal */}
+      {/* Modal content, conditionally rendered */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div
             className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-white/20 animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking inside
           >
-            {/* Header */}
+            {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <div>
                 <h3 className="text-xl font-bold text-slate-800">{t('newTodo') || 'Create New Todo'}</h3>
@@ -228,15 +104,16 @@ const HomeModal = ({ handleAddTodo }: { handleAddTodo: (formData: FormData) => P
                 onClick={() => setIsModalOpen(false)}
                 className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors duration-200"
               >
+                {/* Close icon */}
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            {/* Form */}
+            {/* Modal Form */}
             <form onSubmit={formik.handleSubmit} className="p-6 space-y-6">
-              {/* Title Input */}
+              {/* Title Field */}
               <div>
                 <label htmlFor="title" className="block text-sm font-semibold text-slate-700 mb-2">
                   {t('title') || 'Todo Title'}
@@ -254,6 +131,7 @@ const HomeModal = ({ handleAddTodo }: { handleAddTodo: (formData: FormData) => P
                   }`}
                   placeholder={t('titlePlaceholder') || 'Enter your todo title...'}
                 />
+                {/* Title Error Message */}
                 {formik.touched.title && formik.errors.title && (
                   <div className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -264,12 +142,11 @@ const HomeModal = ({ handleAddTodo }: { handleAddTodo: (formData: FormData) => P
                 )}
               </div>
 
-              {/* Image Upload */}
+              {/* Image Upload Field with Drag and Drop */}
               <div>
                 <label htmlFor="image" className="block text-sm font-semibold text-slate-700 mb-2">
                   {t('uploadImage') || 'Upload Image'}
                 </label>
-                
                 <div
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -296,7 +173,6 @@ const HomeModal = ({ handleAddTodo }: { handleAddTodo: (formData: FormData) => P
                     name="image"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  
                   <div className="text-center">
                     {formik.values.image ? (
                       <div className="space-y-2">
@@ -323,7 +199,7 @@ const HomeModal = ({ handleAddTodo }: { handleAddTodo: (formData: FormData) => P
                     )}
                   </div>
                 </div>
-
+                {/* Image Error Message */}
                 {formik.touched.image && formik.errors.image && (
                   <div className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

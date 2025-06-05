@@ -48,6 +48,16 @@
   "passwordMin": "Password must be at least 6 characters",
   "rePasswordRequired": "Password Confirmation is Required",
   "passwordMatch": "Passwords Must Match",
-  "registerButton": "Register"
+  "registerButton": "Register",
+    "card": {
+    "complete": "complete",
+    "completed": "Completed!",
+    "progress": "Progress",
+    "status": {
+      "complete": "Complete",
+      "inProgress": "In Progress",
+      "notStarted": "Not Started"
+    }
+  }
 }
  

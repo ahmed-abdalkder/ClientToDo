@@ -1,31 +1,65 @@
- import React from "react";
-import axios from "axios";
-import { useFormik } from "formik";
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import * as Yup from "yup";
-import { AuthContext } from "../../Context/Auth/AuthContext";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
+ // This is the Signin component responsible for rendering the login form,
+// handling user input validation, submitting login requests to the server,
+// managing authentication state, and navigating the user after successful login.
+
+import React from "react"; 
+// Import React (optional in newer React versions but still common)
+
+import axios from "axios"; 
+// Import axios for making HTTP requests to the backend API
+
+import { useFormik } from "formik"; 
+// Import useFormik hook to handle form state and validation easily
+
+import { useContext, useState } from "react"; 
+// Import React hooks: useContext for accessing global state, useState for local state
+
+import { Link, useNavigate } from "react-router-dom"; 
+// Import Link for navigation links and useNavigate for programmatic navigation
+
+import * as Yup from "yup"; 
+// Import Yup library for schema-based form validation
+
+import { AuthContext } from "../../Context/Auth/AuthContext"; 
+// Import AuthContext to access and update authentication-related data globally
+
+import toast from "react-hot-toast"; 
+// Import toast for showing user notifications (success, error messages)
+
+import { useTranslation } from "react-i18next"; 
+// Import useTranslation hook for internationalization (i18n), to support multiple languages
+
 
 const Signin = () => {
-  const { t } = useTranslation();  
+  // Initialize translation function to get localized text strings
+  const { t } = useTranslation();
+
+  // Local state to manage whether the user wants to be remembered (persist login)
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Destructure setUserName and setToken from AuthContext to update global auth state
   const { setUserName, setToken } = useContext(AuthContext);
+
+  // useNavigate hook to redirect user programmatically after successful login
   const navigate = useNavigate();
 
+  // Define TypeScript type for the form values
   type values = {
     email: string;
     password: string;
   };
 
+  // Async function to handle signin request to backend
   async function signin(values: values) {
     try {
+      // Send POST request with email and password to login endpoint
       const { data } = await axios.post(
-        "https://server-to-do-lake.vercel.app/api/users/login",
+        "http://localhost:3000/api/users/login",
         values
       );
 
+      // Store token and username either in localStorage or sessionStorage
+      // depending on whether "Remember Me" is checked
       if (rememberMe) {
         localStorage.setItem("tkn", data.token);
         localStorage.setItem("name", data.user.name);
@@ -34,54 +68,64 @@ const Signin = () => {
         sessionStorage.setItem("name", data.user.name);
       }
 
+      // Update global auth state with new token and user name
       setToken(data.token);
       setUserName(data.user.name);
 
+      // Show success notification with translated message
       toast.success(t("login_success"));
+
+      // Redirect to the /home page after 1 second delay
       setTimeout(() => {
         navigate("/home");
       }, 1000);
     } catch (err: unknown) {
-  if (typeof err === 'object' && err !== null && 'response' in err) {
-    const error = err as { response?: { data?: { msg?: string } } };
-    toast.error(error.response?.data?.msg || "Error");
-  } else {
-    toast.error("Error");
+      // Handle errors from server or network
+      if (typeof err === 'object' && err !== null && 'response' in err) {
+        const error = err as { response?: { data?: { msg?: string } } };
+        // Show error message from server or default "Error"
+        toast.error(error.response?.data?.msg || "Error");
+      } else {
+        toast.error("Error");
+      }
+    }
   }
-}
 
-  }
-
+  // Initialize Formik to manage form state, validation, and submission
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: Yup.object({
+      // Validate email format and required field with translations
       email: Yup.string()
         .email(t("email_invalid"))
         .required(t("email_required")),
+      // Validate password minimum length and required field with translations
       password: Yup.string()
         .min(6, t("password_min"))
         .required(t("password_required")),
     }),
+    // On form submit, call signin function with form values
     onSubmit: (values) => signin(values),
   });
 
+  // Render the sign-in form UI
   return (
     <div className="container relative mt-4">
       <div className="w-full md:w-2/3 mx-auto">
         <h2 className="text-2xl">{t("signin_title")}</h2>
         <form
-          onSubmit={formik.handleSubmit}
+          onSubmit={formik.handleSubmit} // Connect form submission to Formik handler
           className="w-full mx-auto mt-2 shadow bg-white p-6 rounded-2xl"
         >
-          {/* Email */}
+          {/* Email Input Field */}
           <div className="relative z-0 w-full mb-3 group">
             <input
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.email}
+              onBlur={formik.handleBlur} // Mark field as touched on blur
+              onChange={formik.handleChange} // Update formik values on change
+              value={formik.values.email} // Controlled input value
               type="email"
               name="email"
               id="floating_email"
@@ -95,18 +139,19 @@ const Signin = () => {
               {t("email")}
             </label>
           </div>
+          {/* Show validation error for email if field touched and error exists */}
           {formik.touched.email && formik.errors.email && (
             <div className="mb-5 text-sm text-red-800" role="alert">
               {formik.errors.email}
             </div>
           )}
 
-          {/* Password */}
+          {/* Password Input Field */}
           <div className="relative z-0 w-full mb-3 group">
             <input
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.password}
+              onBlur={formik.handleBlur} // Mark as touched on blur
+              onChange={formik.handleChange} // Update Formik state on change
+              value={formik.values.password} // Controlled input value
               type="password"
               name="password"
               id="floating_password"
@@ -120,17 +165,18 @@ const Signin = () => {
               {t("password")}
             </label>
           </div>
+          {/* Show validation error for password */}
           {formik.touched.password && formik.errors.password && (
             <div className="mb-5 text-sm text-red-800" role="alert">
               {formik.errors.password}
             </div>
           )}
 
-          {/* Remember Me */}
+          {/* Remember Me Checkbox */}
           <div className="flex items-start mb-5">
             <input
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
+              checked={rememberMe} // Controlled checkbox state
+              onChange={() => setRememberMe(!rememberMe)} // Toggle rememberMe state on click
               id="remember"
               type="checkbox"
               className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50"
@@ -143,16 +189,15 @@ const Signin = () => {
             </label>
           </div>
 
-          {/* Submit */}
+          {/* Submit button and Register link */}
           <div className="flex-col md:flex-row flex items-start justify-between gap-y-3">
-          
             <button
               type="submit"
               className="!underline text-white bg-sky-400 hover:bg-sky-500 px-8 cursor-pointer font-medium rounded-lg w-full md:w-auto block py-2.5 text-center md:me-auto"
             >
               {t("signin")}
             </button>
-              <Link
+            <Link
               to="/"
               className="!text-sky-400  cursor-pointer font-medium rounded-lg text-sm w-full md:w-auto block px-8 py-2.5 text-center md:ms-auto"
             >
