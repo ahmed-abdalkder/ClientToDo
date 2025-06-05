@@ -104,7 +104,7 @@ const Signin = () => {
         .required(t("email_required")),
       // Validate password minimum length and required field with translations
       password: Yup.string()
-        .min(6, t("password_min"))
+        .min(6, t("password_min Password must include uppercase letter, number, and symbol"))
         .required(t("password_required")),
     }),
     // On form submit, call signin function with form values
@@ -115,7 +115,7 @@ const Signin = () => {
   return (
     <div className="container relative mt-4">
       <div className="w-full md:w-2/3 mx-auto">
-        <h2 className="text-2xl">{t("signin_title")}</h2>
+        <h2 className="text-2xl">{t("signin")}</h2>
         <form
           onSubmit={formik.handleSubmit} // Connect form submission to Formik handler
           className="w-full mx-auto mt-2 shadow bg-white p-6 rounded-2xl"

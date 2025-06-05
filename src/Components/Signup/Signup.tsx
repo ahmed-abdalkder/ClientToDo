@@ -101,7 +101,7 @@ const Signup = () => {
             </label>
           </div>
           {/* Validation error message for Name */}
-          {formik.touched.name && formik.errors.name && <div className="error-style">{formik.errors.name}</div>}
+          {formik.touched.name && formik.errors.name && <div className="mb-5 text-sm text-red-800">{formik.errors.name}</div>}
 
           {/* Input field for Email */}
           <div className="relative z-0 w-full mb-3 group">
@@ -124,7 +124,7 @@ const Signup = () => {
             </label>
           </div>
           {/* Validation error message for Email */}
-          {formik.touched.email && formik.errors.email && <div className="error-style">{formik.errors.email}</div>}
+          {formik.touched.email && formik.errors.email && <div className="mb-5 text-sm text-red-800">{formik.errors.email}</div>}
 
           {/* Input field for Password */}
           <div className="relative z-0 w-full mb-3 group">
@@ -147,7 +147,7 @@ const Signup = () => {
             </label>
           </div>
           {/* Validation error message for Password */}
-          {formik.touched.password && formik.errors.password && <div className="error-style">{formik.errors.password}</div>}
+          {formik.touched.password && formik.errors.password && <div className="mb-5 text-sm text-red-800">{formik.errors.password}</div>}
 
           {/* Input field for Re-Password (confirm password) */}
           <div className="relative z-0 w-full mb-3 group">
@@ -170,7 +170,7 @@ const Signup = () => {
             </label>
           </div>
           {/* Validation error message for Re-Password */}
-          {formik.touched.rePassword && formik.errors.rePassword && <div className="error-style">{formik.errors.rePassword}</div>}
+          {formik.touched.rePassword && formik.errors.rePassword && <div className="mb-5 text-sm text-red-800">{formik.errors.rePassword}</div>}
 
           {/* Submit button and link to signin page */}
           <div className="flex-col md:flex-row flex items-start justify-between gap-y-3">
