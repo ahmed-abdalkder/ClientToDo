@@ -55,7 +55,7 @@ const Home = () => {
     queryKey: ["allTodos"],
     queryFn: async () => {
       // Make GET request to fetch all todos with auth token header
-      const res = await axios.get("http://localhost:3000/api/todos/gettodos", {
+      const res = await axios.get("https://server-to-do-lake.vercel.app/api/todos/gettodos", {
         headers: { token },
       });
       return res.data;
@@ -68,7 +68,7 @@ const Home = () => {
   const addTodoMutation = useMutation({
     mutationFn: async (formData: FormData) => {
       // POST request to add todo with form data and token header
-      return await axios.post("http://localhost:3000/api/todos", formData, {
+      return await axios.post("https://server-to-do-lake.vercel.app/api/todos", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           token,
@@ -93,7 +93,7 @@ const Home = () => {
     queryKey: ["findTodo", searchTerm],
     queryFn: async () => {
       // GET request to find todo by search term, with auth token
-      const res = await axios.get(`http://localhost:3000/api/todos/gettodo/${searchTerm}`, {
+      const res = await axios.get(`https://server-to-do-lake.vercel.app/api/todos/gettodo/${searchTerm}`, {
         headers: { token },
       });
       return res.data;
@@ -107,7 +107,7 @@ const Home = () => {
   const removeTodoMutation = useMutation({
     mutationFn: async (id: string) => {
       // DELETE request to remove todo by id with auth token
-      return await axios.delete(`http://localhost:3000/api/todos/${id}/task`, {
+      return await axios.delete(`https://server-to-do-lake.vercel.app/api/todos/${id}/task`, {
         headers: { token },
       });
     },

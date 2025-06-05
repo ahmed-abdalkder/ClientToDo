@@ -75,7 +75,7 @@ export async function subscribeUserToPush() {
     if (!token) { return }
 
     // Send subscription details to backend API to save it (with token authorization)
-    await axios.post('http://localhost:3000/subscriptions/api/save-subscription', subscriptionToSend, {
+    await axios.post('https://server-to-do-lake.vercel.app/subscriptions/api/save-subscription', subscriptionToSend, {
       headers: {
         token,
         'Content-Type': 'application/json',
