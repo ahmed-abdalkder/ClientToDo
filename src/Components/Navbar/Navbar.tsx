@@ -13,7 +13,7 @@ import userImage from "../../assets/user.jpeg";
 // Importing React hooks and the AuthContext to access and manage auth state
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Context/Auth/AuthContext";
-import todooz from "../../assets/todo.png"
+ 
 // useTranslation is used for internationalization (i18n) support
 import { useTranslation } from 'react-i18next';
 
@@ -68,7 +68,7 @@ const Navbar = () => {
         
         {/* App title/logo */}
         <div className="text-center text-2xl font-medium">
-          <img src={todooz} className="w-36 h-20" alt="" />
+           
           {/* <h1>
             TO
             <span className="text-sky-600">
